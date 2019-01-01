@@ -1,0 +1,54 @@
+<html>
+<head>
+
+  <title>{% block title %}Sample - {% endblock %}</title>
+
+{% block head %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
+{% endblock %}
+
+</head>
+<body class="ui grid" >
+
+{% block navbar %}
+{% include('_menu.html') %}
+{% endblock %}
+
+<div class="ui container">
+
+{% block content %}
+    {% for message in get_flashed_messages() %}
+      <div class="ui message transition">
+        <i class="close icon"></i>
+        {{ message }}
+      </div>
+    {% endfor %}
+{% endblock %}
+{% block page_content %}
+
+{% endblock %}
+  </div>
+
+{% block scripts %}
+  <script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
+     <script type="application/javascript">
+  $('.ui.checkbox').checkbox();
+
+
+  $('.ui.dropdown').dropdown();
+  $('.menu .item').tab();
+  </script>
+
+{% endblock %}
+
+</body>
+</html>
+
+
+
