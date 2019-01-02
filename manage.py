@@ -66,6 +66,21 @@ def profile(length=25, profile_dir=None):
     app.run()
 
 
+@manager.command
+def sample_data():
+    db.create_all()
+
+    u1 = User()
+    u1.password = 'password'
+    u1.email = 'test@test.com'
+    u1.username = 'username'
+
+    print(type(u1.username))
+    print(type(u1.email))
+    db.session.add(u1)
+
+    db.session.commit()
+
 # @manager.command
 # def deploy():
 #     """Run deployment tasks."""

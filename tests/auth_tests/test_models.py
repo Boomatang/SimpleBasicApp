@@ -38,7 +38,7 @@ paths = ['main.test']
 
 @pytest.mark.single_thread
 @pytest.mark.parametrize('path', paths)
-def test_login_required(client, path):
+def test_login_required(clean_db, client, path):
     u = User()
     u.password = 'cat'
     u.email = 'test@test.test'
