@@ -3,24 +3,23 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    SECRET_KEY = os.environ.get('CLUE_SECRET_KEY') or 'hard to guess string'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     SSL_DISABLE = False
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
-    MAIL_SERVER = 'mail.blacknight.com'
-    MAIL_PORT = 25
-    MAIL_USE_TLS = False
+    MAIL_SERVER = 'smtp.googlemail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    MAIL_SUBJECT_PREFIX = '[Flasky]'
-    MAIL_SENDER = 'System Server <jimfity@gmail.com>'
+    MAIL_SUBJECT_PREFIX = '[App]'
+    MAIL_SENDER = 'System Server <clue.service.mail@gmail.com>'
     ADMIN = os.environ.get('CLUE_ADMIN')
     POSTS_PER_PAGE = 15
     FOLLOWERS_PER_PAGE = 50
     COMMENTS_PER_PAGE = 30
     SLOW_DB_QUERY_TIME = 0.5
-    UPLOADS = os.environ.get('CLUE_UPLOADS', os.environ.get('HOME')+"/Public")
 
     @staticmethod
     def init_app(app):

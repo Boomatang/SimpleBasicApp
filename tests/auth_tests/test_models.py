@@ -1,6 +1,7 @@
 import pytest
 from flask import url_for
 
+from app import db
 from app.auth_models import User
 
 
@@ -33,20 +34,12 @@ def test_user_salts_are_random():
     assert u.password_hash != u2.password_hash
 
 
-paths = ['main.test']
-
-
-@pytest.mark.single_thread
-@pytest.mark.parametrize('path', paths)
-def test_login_required(clean_db, client, path):
+def test_valid_confirmation_token():
     u = User()
     u.password = 'cat'
-    u.email = 'test@test.test'
+    db.session.add(u)
+    db.session.commit()
 
-    response = client.post(url_for('auth.login'),
-                           data={
-                               'email': 'test@test.com',
-                               'password': 'cat'},
-                           follow_redirects=True)
+    token = u.generate_confirmation_token()
 
-    assert client.get(url_for(path), follow_redirects=True).status_code == 200
+    assert u.confirm(token)

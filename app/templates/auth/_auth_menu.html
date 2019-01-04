@@ -1,5 +1,17 @@
 
-<div class="ui item">
-    <a class="item" href="{{ url_for('auth.login') }}">Login <i class="sign-in icon"></i></a>
-    <a class="item" href="{{ url_for('auth.register') }}">Sign Up</a>
-</div>
+    {% if current_user.is_authenticated %}
+
+      <div class="ui  item">
+
+          <a href="{{ url_for('auth.change_password') }}">Change Password</a>
+          <a href="{{ url_for('auth.change_email_request') }}">Change Email</a>
+          <a href="{{ url_for('auth.logout') }}">Log Out</a>
+
+      </div>
+
+    {% else %}
+      <div class="ui item">
+        <a class="item" href="{{ url_for('auth.login') }}">Login <i class="sign-in icon"></i></a>
+        <a class="item" href="{{ url_for('auth.register') }}">Sign Up</a>
+      </div>
+    {% endif %}

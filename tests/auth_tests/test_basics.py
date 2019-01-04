@@ -31,6 +31,7 @@ def test_user_login_redirects_to_index(client, user):
     u = User()
     u.email = user['email']
     u.password = user['password']
+    u.confirmed = True
     db.session.add(u)
     db.session.commit()
     data = {'email': user['email'],
@@ -89,3 +90,24 @@ def test_user_register_fails(clean_db, client, user):
                            data=data)
 
     assert user['massage'] in response.data
+
+
+paths = ['main.test', 'auth.change_password', 'auth.password_reset_request',
+         'auth.change_email_request']
+
+
+@pytest.mark.single_thread
+@pytest.mark.parametrize('path', paths)
+def test_login_required(clean_db, client, path):
+    u = User()
+    u.password = 'cat'
+    u.email = 'test@test.test'
+    u.confirmed = True
+
+    response = client.post(url_for('auth.login'),
+                           data={
+                               'email': 'test@test.com',
+                               'password': 'cat'},
+                           follow_redirects=True)
+
+    assert client.get(url_for(path), follow_redirects=True).status_code == 200
