@@ -194,7 +194,7 @@ def company_settings():
             return render_template('auth/company_settings.html', users=users, form=form)
 
         invite_user(email)
-
+        return redirect(url_for('auth.company_settings'))
     return render_template('auth/company_settings.html', users=users, form=form)
 
 
@@ -237,4 +237,20 @@ def remove_user(user_id):
     name = user.username
     db.session.delete(user)
     flash(f'{name} been removed from the company')
+    return redirect(url_for('auth.company_settings'))
+
+
+@auth.route('/reset_user_password/<user_id>')
+@login_required
+def reset_user_password(user_id):
+    user = User.load_user(user_id)
+    print(user)
+    name = user.username
+    token = user.generate_reset_token()
+    send_email(user.email, 'Reset Your Password',
+               'auth/email/reset_password',
+               user=user, token=token,
+               next=request.args.get('next'))
+
+    flash(f'An email with instructions to reset {name}\'s password has been sent to {name}.')
     return redirect(url_for('auth.company_settings'))
