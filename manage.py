@@ -71,16 +71,26 @@ def sample_data():
 
     user1 = User(username='User1', email='user1@example.com', password='cat', confirmed=True)
     user2 = User(username='User2', email='user2@example.com', password='cat', confirmed=True)
+    user3 = User(username='User3', email='user3@example.com', password='cat', confirmed=True)
+    user4 = User(username='User4', email='user4@example.com', password='cat', confirmed=True)
 
-    company = Company(name='Example.com')
+    company1 = Company(name='ExampleCompanyOne.com')
+    company2 = Company(name='ExampleCompanyTwo.com')
 
     db.session.add(user1)
     db.session.add(user2)
+    db.session.add(user3)
+    db.session.add(user4)
 
-    company.add_user(user1)
-    company.add_user(user2)
-    company.set_company_owner(user1)
-    db.session.add(company)
+    company1.add_user(user1)
+    company1.add_user(user2)
+    company1.set_company_owner(user1)
+    db.session.add(company1)
+
+    company2.add_user(user3)
+    company2.add_user(user4)
+    company2.set_company_owner(user1)
+    db.session.add(company2)
 
     db.session.commit()
 
