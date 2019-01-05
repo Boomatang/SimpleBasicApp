@@ -71,3 +71,9 @@ class ChangeEmailForm(FlaskForm):
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():
             raise ValidationError('Email already registered.')
+
+
+class InviteUserForm(FlaskForm):
+    email = StringField('E-mail address', validators=[data_required(), Email()])
+
+    submit = SubmitField('Invite User')

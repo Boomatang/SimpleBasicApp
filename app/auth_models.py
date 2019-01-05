@@ -77,11 +77,6 @@ class User(UserMixin, db.Model):
         return f'<email : {self.email}'
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-
 class Company(db.Model):
     __tablename__ = 'company'
     id = db.Column(db.Integer, primary_key=True)
@@ -94,3 +89,17 @@ class Company(db.Model):
 
     def set_company_owner(self, user):
         self.owner = user
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+def email_in_system(email):
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        return True
+    else:
+        return False

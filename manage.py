@@ -69,8 +69,8 @@ def profile(length=25, profile_dir=None):
 def sample_data():
     db.create_all()
 
-    user1 = User(email='user1@example.com', password='cat', confirmed=True)
-    user2 = User(email='user2@example.com', password='cat', confirmed=True)
+    user1 = User(username='User1', email='user1@example.com', password='cat', confirmed=True)
+    user2 = User(username='User2', email='user2@example.com', password='cat', confirmed=True)
 
     company = Company(name='Example.com')
 

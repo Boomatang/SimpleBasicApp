@@ -5,8 +5,8 @@ from app.auth import auth
 from flask import render_template, url_for, redirect, request, flash
 
 from app.auth.forms import LoginForm, RegistrationForm, ChangePasswordForm, PasswordResetRequestForm, PasswordResetForm, \
-    ChangeEmailForm
-from app.auth_models import User, Company
+    ChangeEmailForm, InviteUserForm
+from app.auth_models import User, Company, email_in_system
 from app.email import send_email
 
 
@@ -179,7 +179,21 @@ def change_email(token):
 
 #  Pages related to the company
 
-@auth.route('/company_settings')
+@auth.route('/company_settings', methods=['GET', 'POST'])
 @login_required
 def company_settings():
-    return "Company Settings"
+
+    form = InviteUserForm()
+    users = current_user.company.users[:]
+
+    if form.validate_on_submit():
+        print('here')
+        email = form.email.data
+
+        if email_in_system(email):
+            form.email.errors.append('Sorry that email is currently been used')
+            return render_template('auth/company_settings.html', users=users, form=form)
+
+        flash(f'Invite email has been set to {email}')
+
+    return render_template('auth/company_settings.html', users=users, form=form)
