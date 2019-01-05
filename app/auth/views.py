@@ -225,3 +225,16 @@ def invited(token):
         return redirect(url_for('main.index'))
 
     return render_template('auth/invited.html', form=form)
+
+
+@auth.route('/remove_user/<user_id>')
+@login_required
+def remove_user(user_id):
+    user = User.load_user(user_id)
+    if user.is_admin:
+        flash('You cannot remove admin accounts. Pleas contact support for help.')
+        return redirect(url_for('auth.company_settings'))
+    name = user.username
+    db.session.delete(user)
+    flash(f'{name} been removed from the company')
+    return redirect(url_for('auth.company_settings'))

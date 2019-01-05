@@ -15,7 +15,8 @@
         <td>{{ user.email }}</td>
       <td><a href="#"><i class="large green sync icon">Reset</i></a></td>
         <td>
-        <a href="#"><i class="large red trash alternate icon">Delete</i></a>
+        <a href="{{ url_for('auth.remove_user', user_id=user.id) }}"><i class="large red trash alternate
+        icon">Delete</i></a>
       </td>
       </tr>
     {% endfor %}

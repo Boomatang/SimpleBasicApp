@@ -97,6 +97,12 @@ class User(UserMixin, db.Model):
 
         user_id = data.get('invite')
 
+        user = User.load_user(user_id)
+
+        return user
+
+    @staticmethod
+    def load_user(user_id):
         user = User.query.filter_by(id=user_id).first_or_404()
 
         return user
