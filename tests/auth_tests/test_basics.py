@@ -55,33 +55,38 @@ def test_user_login_fails(client, user):
     assert b'Invalid E-mail or Password' in response.data
 
 
-users = [{'username': 'jim', 'email': 'jim@test.com', 'password': 'cat', 'password2': 'cat'}]
+users = [{'company': 'Boring Company', 'username': 'jim', 'email': 'jim@test.com', 'password': 'cat', 'password2': 'cat'}]
 
 
 @pytest.mark.parametrize('user', users)
 def test_user_register_complete(clean_db, client, user):
-    data = {'username': user['username'],
+    data = {'company': user['company'],
+            'username': user['username'],
             'email': user['email'],
             'password': user['password'],
             'password2': user['password2']}
 
     response = client.post(url_for('auth.register'),
                            data=data)
+    db_user = User.query.filter_by(email=user['email']).first()
 
     assert response.status_code == 302
+    assert db_user.username == user['username']
+    assert db_user.company.owner.email == user['email']
 
 
-users = [{'username': 'jim fitz', 'email': 'test@test.com', 'password': 'cat', 'password2': 'cat',
-          'massage': b'must have only letters'},
-         {'username': 'jim', 'email': 'jim@test', 'password': 'cat', 'password2': 'cat',
+users = [{'company': 'Boring Company', 'username': 'jim fitz', 'email': 'test@test.com', 'password': 'cat',
+          'password2': 'cat', 'massage': b'must have only letters'},
+         {'company': 'The Fast Company', 'username': 'jim', 'email': 'jim@test', 'password': 'cat', 'password2': 'cat',
           'massage': b'Invalid email address'},
-         {'username': 'jim', 'email': 'jim@test.com', 'password': 'cat', 'password2': 'dog',
+         {'company': 'Bad Company', 'username': 'jim', 'email': 'jim@test.com', 'password': 'cat', 'password2': 'dog',
           'massage': b'Passwords must match'}]
 
 
 @pytest.mark.parametrize('user', users)
 def test_user_register_fails(clean_db, client, user):
-    data = {'username': user['username'],
+    data = {'company': user['company'],
+            'username': user['username'],
             'email': user['email'],
             'password': user['password'],
             'password2': user['password2']}

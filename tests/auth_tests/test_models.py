@@ -2,7 +2,7 @@ import pytest
 from flask import url_for
 
 from app import db
-from app.auth_models import User
+from app.auth_models import User, Company
 
 
 def test_user_password_setter():
@@ -34,7 +34,7 @@ def test_user_salts_are_random():
     assert u.password_hash != u2.password_hash
 
 
-def test_valid_confirmation_token():
+def test_valid_confirmation_token(clean_db):
     u = User()
     u.password = 'cat'
     db.session.add(u)
@@ -43,3 +43,70 @@ def test_valid_confirmation_token():
     token = u.generate_confirmation_token()
 
     assert u.confirm(token)
+
+
+def test_create_company():
+    c = Company()
+    c.name = 'test name'
+
+    db.session.add(c)
+
+    db.session.commit()
+
+    db_c = Company.query.filter_by(name='test name').first()
+
+    assert db_c == c
+
+
+def test_company_add_users(clean_db):
+    company = Company()
+    company.name = 'test name'
+
+    user1 = User()
+    user1.username = 'Frank'
+    user2 = User()
+    user2.username = 'John'
+
+    db.session.add(user1)
+    db.session.add(user2)
+    db.session.add(company)
+
+    company.add_user(user1)
+    company.add_user(user2)
+
+    users = company.users
+
+    assert user1 in users
+    assert user2 in users
+
+
+def test_company_owner(clean_db):
+    company = Company()
+    company.name = 'test name'
+
+    user1 = User()
+    user1.username = 'Frank'
+
+    db.session.add(user1)
+    db.session.add(company)
+
+    company.set_company_owner(user1)
+
+    assert user1 == company.owner
+
+
+def test_users_company_name(clean_db):
+    company = Company()
+    company.name = 'test name'
+
+    user1 = User()
+    user1.username = 'Frank'
+
+    db.session.add(user1)
+    db.session.add(company)
+
+    company.add_user(user1)
+
+    db.session.commit()
+
+    assert user1.company.name == company.name

@@ -13,6 +13,9 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=True)
+    company = db.relationship("Company", back_populates="users")
+
 
     @property
     def password(self):
@@ -66,3 +69,17 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class Company(db.Model):
+    __tablename__ = 'company'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), index=True)
+    users = db.relationship("User", back_populates="company")
+    owner = db.relationship("User", uselist=False)
+
+    def add_user(self, user):
+        self.users.append(user)
+
+    def set_company_owner(self, user):
+        self.owner = user

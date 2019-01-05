@@ -6,7 +6,7 @@ from flask import render_template, url_for, redirect, request, flash
 
 from app.auth.forms import LoginForm, RegistrationForm, ChangePasswordForm, PasswordResetRequestForm, PasswordResetForm, \
     ChangeEmailForm
-from app.auth_models import User
+from app.auth_models import User, Company
 from app.email import send_email
 
 
@@ -56,7 +56,16 @@ def register():
 
         user = User(email=email, username=username)
         user.password = form.password.data
+
+        company = Company()
+        company.name = form.company.data
+
         db.session.add(user)
+        db.session.add(company)
+
+        company.set_company_owner(user)
+        company.add_user(user)
+
         db.session.commit()
         token = user.generate_confirmation_token()
         send_email(user.email, 'Confirm Your Account',

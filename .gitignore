@@ -195,3 +195,6 @@ package-lock.json
 package.json
 *.bak
 semantic/
+local_config.py
+local_config.sh
+
