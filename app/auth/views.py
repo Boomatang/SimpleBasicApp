@@ -154,7 +154,7 @@ def change_email_request():
     form = ChangeEmailForm()
     if form.validate_on_submit():
         if current_user.verify_password(form.password.data):
-            new_email = form.email.data--amend --no-edit
+            new_email = form.email.data
             token = current_user.generate_email_change_token(new_email)
             send_email(new_email, 'Confirm your email address',
                        'auth/email/change_email',
@@ -182,6 +182,10 @@ def change_email(token):
 @auth.route('/company_settings', methods=['GET', 'POST'])
 @login_required
 def company_settings():
+
+    if current_user.is_admin is not True:
+        flash('Access Denied')
+        return redirect(url_for('main.index'))
 
     form = InviteUserForm()
     users = current_user.company.users[:]
