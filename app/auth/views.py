@@ -175,3 +175,11 @@ def change_email(token):
     else:
         flash('Invalid request.')
     return redirect(url_for('main.index'))
+
+
+#  Pages related to the company
+
+@auth.route('/company_settings')
+@login_required
+def company_settings():
+    return "Company Settings"

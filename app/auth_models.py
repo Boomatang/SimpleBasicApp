@@ -14,7 +14,8 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=True)
-    company = db.relationship("Company", back_populates="users")
+    company = db.relationship("Company", back_populates="users", lazy=False)
+    admin = db.relationship("Company", back_populates="owner")
 
 
     @property
@@ -65,6 +66,16 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         return True
 
+    @property
+    def is_admin(self):
+        if self.email == self.company.owner.email:
+            return True
+        else:
+            return False
+
+    def __repr__(self):
+        return f'<email : {self.email}'
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -76,7 +87,7 @@ class Company(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
     users = db.relationship("User", back_populates="company")
-    owner = db.relationship("User", uselist=False)
+    owner = db.relationship("User", uselist=False, back_populates="admin")
 
     def add_user(self, user):
         self.users.append(user)

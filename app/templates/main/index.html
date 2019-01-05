@@ -3,8 +3,14 @@
 {% block title %}{{ super() }} Auth Index {% endblock %}
 
 {% block page_content %}
+<div class="ui two column centered grid">
+  <div class="ui column container">
 <h1>Page Header</h1>
 <p>Page content</p>
+
+{{ current_user.is_admin}}
+</div>
+</div>
 {% endblock %}
 
 {% block scripts %}

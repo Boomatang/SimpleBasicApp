@@ -2,7 +2,7 @@ import pytest
 from flask import current_app, url_for
 
 from app import db
-from app.auth_models import User
+from app.auth_models import User, Company
 
 paths = ['main.index', 'auth.login', 'auth.register']
 
@@ -116,3 +116,47 @@ def test_login_required(clean_db, client, path):
                            follow_redirects=True)
 
     assert client.get(url_for(path), follow_redirects=True).status_code == 200
+
+
+def create_company():
+    user1 = User(email='user1@example.com', password='cat', confirmed=True)
+    user2 = User(email='user2@example.com', password='cat', confirmed=True)
+
+    company = Company(name='Example.com')
+
+    db.session.add(user1)
+    db.session.add(user2)
+    db.session.add(company)
+
+    company.add_user(user1)
+    company.add_user(user2)
+    company.set_company_owner(user1)
+
+    db.session.commit()
+
+
+def login_user(user, client):
+    data = {'email': user['email'],
+            'password': user['password']}
+    response = client.post(url_for('auth.login'),
+                           data=data, follow_redirects=True)
+
+    return response
+
+
+users = [{'email': 'user1@example.com', 'password': 'cat', 'response': True},
+         {'email': 'user2@example.com', 'password': 'cat', 'response': False}]
+
+
+@pytest.mark.parametrize('user', users)
+def test_menu_for_company_settings_link(client, clean_db, user):
+    """Test if the user can see the company settings"""
+
+    check_string = b'Company Settings'
+
+    create_company()
+    response = login_user(user, client)
+
+    answer = check_string in response.data
+
+    assert answer == user['response']

@@ -81,8 +81,9 @@ def test_company_add_users(clean_db):
 
 
 def test_company_owner(clean_db):
+    name = 'Test Company'
     company = Company()
-    company.name = 'test name'
+    company.name = name
 
     user1 = User()
     user1.username = 'Frank'
@@ -91,8 +92,11 @@ def test_company_owner(clean_db):
     db.session.add(company)
 
     company.set_company_owner(user1)
+    db.session.commit()
 
-    assert user1 == company.owner
+    db_company = Company.query.filter_by(name=name).first()
+
+    assert user1 == db_company.owner
 
 
 def test_users_company_name(clean_db):

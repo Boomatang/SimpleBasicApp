@@ -18,8 +18,7 @@ if os.path.exists('.env'):
 from app import create_app, db
 from flask_script import Manager, Shell
 # from flask_migrate import Migrate, MigrateCommand
-from app.auth_models import User
-
+from app.auth_models import User, Company
 
 app = create_app(os.getenv('CLUE_CONFIG') or 'default')
 manager = Manager(app)
@@ -27,7 +26,7 @@ manager = Manager(app)
 
 
 def make_shell_context():
-    return dict(app=app, db=db, User=User,
+    return dict(app=app, db=db, User=User, Company=Company,
                 )
 
 
@@ -70,14 +69,18 @@ def profile(length=25, profile_dir=None):
 def sample_data():
     db.create_all()
 
-    u1 = User()
-    u1.password = 'password'
-    u1.email = 'test@test.com'
-    u1.username = 'username'
+    user1 = User(email='user1@example.com', password='cat', confirmed=True)
+    user2 = User(email='user2@example.com', password='cat', confirmed=True)
 
-    print(type(u1.username))
-    print(type(u1.email))
-    db.session.add(u1)
+    company = Company(name='Example.com')
+
+    db.session.add(user1)
+    db.session.add(user2)
+
+    company.add_user(user1)
+    company.add_user(user2)
+    company.set_company_owner(user1)
+    db.session.add(company)
 
     db.session.commit()
 
