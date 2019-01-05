@@ -5,8 +5,8 @@ from app.auth import auth
 from flask import render_template, url_for, redirect, request, flash
 
 from app.auth.forms import LoginForm, RegistrationForm, ChangePasswordForm, PasswordResetRequestForm, PasswordResetForm, \
-    ChangeEmailForm, InviteUserForm
-from app.auth_models import User, Company, email_in_system
+    ChangeEmailForm, InviteUserForm, InvitedUserForm
+from app.auth_models import User, Company, email_in_system, invite_user
 from app.email import send_email
 
 
@@ -154,7 +154,7 @@ def change_email_request():
     form = ChangeEmailForm()
     if form.validate_on_submit():
         if current_user.verify_password(form.password.data):
-            new_email = form.email.data
+            new_email = form.email.data--amend --no-edit
             token = current_user.generate_email_change_token(new_email)
             send_email(new_email, 'Confirm your email address',
                        'auth/email/change_email',
@@ -187,13 +187,41 @@ def company_settings():
     users = current_user.company.users[:]
 
     if form.validate_on_submit():
-        print('here')
         email = form.email.data
 
         if email_in_system(email):
             form.email.errors.append('Sorry that email is currently been used')
             return render_template('auth/company_settings.html', users=users, form=form)
 
-        flash(f'Invite email has been set to {email}')
+        invite_user(email)
 
     return render_template('auth/company_settings.html', users=users, form=form)
+
+
+@auth.route('/invited/<token>', methods=['GET', 'POST'])
+def invited(token):
+    form = InvitedUserForm()
+
+    if User.confirm_invited_user(token):
+        user = User.load_invited_user(token)
+        login_user(user)
+
+        if user.confirmed:
+            flash('Account already activated!')
+            return redirect(url_for('main.index'))
+
+        if form.validate_on_submit():
+            user.password = form.password.data
+            user.username = form.username.data
+            user.confirmed = True
+
+            db.session.add(user)
+            db.session.commit()
+
+            return redirect(url_for('main.index'))
+
+    else:
+        flash('Unable to confirm your invite')
+        return redirect(url_for('main.index'))
+
+    return render_template('auth/invited.html', form=form)

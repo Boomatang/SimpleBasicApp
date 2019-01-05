@@ -3,6 +3,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, current_user
 
+from app.email import send_email
 from . import db, login_manager
 
 
@@ -73,6 +74,33 @@ class User(UserMixin, db.Model):
         else:
             return False
 
+    def generate_invite_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'invite': self.id})
+
+    @staticmethod
+    def confirm_invited_user(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        return True
+
+    @staticmethod
+    def load_invited_user(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+
+        user_id = data.get('invite')
+
+        user = User.query.filter_by(id=user_id).first_or_404()
+
+        return user
+
     def __repr__(self):
         return f'<email : {self.email}'
 
@@ -103,3 +131,21 @@ def email_in_system(email):
         return True
     else:
         return False
+
+
+def invite_user(email):
+    flash(f'Invite email has been set to {email}')
+
+    user = User()
+    user.email = email
+
+    db.session.add(user)
+    current_user.company.add_user(user)
+    db.session.commit()
+
+    token = user.generate_invite_token()
+    send_email(user.email, 'You have been invited',
+               'auth/email/invite', user=user, token=token)
+
+
+
