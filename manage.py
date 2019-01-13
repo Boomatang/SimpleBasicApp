@@ -18,7 +18,7 @@ if os.path.exists('.env'):
 from app import create_app, db
 from flask_script import Manager, Shell
 # from flask_migrate import Migrate, MigrateCommand
-from app.auth_models import User, Company
+from app.auth_models import User, Company, Asset, UserRole, CompanyFeature
 
 app = create_app(os.getenv('CLUE_CONFIG') or 'default')
 manager = Manager(app)
@@ -26,7 +26,8 @@ manager = Manager(app)
 
 
 def make_shell_context():
-    return dict(app=app, db=db, User=User, Company=Company,
+    return dict(app=app, db=db, User=User, Company=Company, Asset=Asset,
+                UserRole=UserRole, CompanyFeature=CompanyFeature,
                 )
 
 
@@ -65,9 +66,15 @@ def profile(length=25, profile_dir=None):
     app.run()
 
 
+def set_up():
+    db.create_all()
+    UserRole.insert_roles()
+    CompanyFeature.insert_features()
+
+
 @manager.command
 def sample_data():
-    db.create_all()
+    set_up()
 
     user1 = User(username='User1', email='user1@example.com', password='cat', confirmed=True)
     user2 = User(username='User2', email='user2@example.com', password='cat', confirmed=True)
@@ -85,11 +92,13 @@ def sample_data():
     company1.add_user(user1)
     company1.add_user(user2)
     company1.set_company_owner(user1)
+    company1.add_asset('company1_asset')
     db.session.add(company1)
 
     company2.add_user(user3)
     company2.add_user(user4)
-    company2.set_company_owner(user1)
+    company2.set_company_owner(user3)
+    company2.add_asset('company2_asset')
     db.session.add(company2)
 
     db.session.commit()

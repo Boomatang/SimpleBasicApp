@@ -119,18 +119,28 @@ def test_login_required(clean_db, client, path):
 
 
 def create_company():
-    user1 = User(email='user1@example.com', password='cat', confirmed=True)
-    user2 = User(email='user2@example.com', password='cat', confirmed=True)
+    user1 = User(username='User1', email='user1@example.com', password='cat', confirmed=True)
+    user2 = User(username='User2', email='user2@example.com', password='cat', confirmed=True)
+    user3 = User(username='User3', email='user3@example.com', password='cat', confirmed=True)
+    user4 = User(username='User4', email='user4@example.com', password='cat', confirmed=True)
 
-    company = Company(name='Example.com')
+    company1 = Company(name='ExampleCompanyOne.com')
+    company2 = Company(name='ExampleCompanyTwo.com')
 
     db.session.add(user1)
     db.session.add(user2)
-    db.session.add(company)
+    db.session.add(user3)
+    db.session.add(user4)
 
-    company.add_user(user1)
-    company.add_user(user2)
-    company.set_company_owner(user1)
+    company1.add_user(user1)
+    company1.add_user(user2)
+    company1.set_company_owner(user1)
+    db.session.add(company1)
+
+    company2.add_user(user3)
+    company2.add_user(user4)
+    company2.set_company_owner(user3)
+    db.session.add(company2)
 
     db.session.commit()
 
@@ -156,6 +166,31 @@ def test_menu_for_company_settings_link(client, clean_db, user):
 
     create_company()
     response = login_user(user, client)
+
+    answer = check_string in response.data
+
+    assert answer == user['response']
+
+
+users = [{'email': 'user1@example.com', 'password': 'cat', 'response': True, 'company': 'ExampleCompanyOne.com',
+          'asset': 'company1_asset', 'check': b'company1_asset'},
+         {'email': 'user3@example.com', 'password': 'cat', 'response': True, 'company': 'ExampleCompanyOne.com',
+          'asset': 'company1_asset', 'check': b'The requested URL was not found on the server'}]
+
+
+@pytest.mark.parametrize('user', users)
+def test_user_access_to_assets(client, clean_db, user):
+    """Test if the user can see the company settings"""
+    create_company()
+
+    company = Company.load_company_by_name(user['company'])
+    company.add_asset(user['asset'])
+
+    check_string = user['check']
+
+    login_user(user, client)
+
+    response = client.get(url_for('main.test_asset', asset=user['asset']), follow_redirects=True)
 
     answer = check_string in response.data
 

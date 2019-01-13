@@ -1,6 +1,7 @@
 from flask import render_template
 from flask_login import login_required
 
+from app.decorators import company_asset
 from . import main
 
 
@@ -14,3 +15,10 @@ def index():
 @login_required
 def test():
     return render_template('main/test.html')
+
+
+@main.route('/test/<asset>')
+@login_required
+@company_asset()
+def test_asset(asset):
+    return render_template('main/test_token.html', asset=asset)
