@@ -8,7 +8,6 @@
     <form class="ui large form" method="POST">
       {{ form.csrf_token }}
       <div class="ui stacked segment">
-        {{ render_field(form.company, placeholder="Company Name", autocomplete="off") }}
         {{ render_field(form.username, placeholder="Username", autocomplete="off") }}
         {{ render_field(form.email, placeholder="E-mail address", autocomplete="off") }}
         {{ render_field(form.password, placeholder="Password", autocomplete="off") }}

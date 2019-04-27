@@ -5,10 +5,16 @@
 {% block page_content %}
 <div class="ui two column centered grid">
   <div class="ui column container">
-<h1>Page Header</h1>
-<p>Page content</p>
+<h1>This is the home page of the app.</h1>
+<p>A user is not required to be logged in here.</p>
 
-{{ current_user.is_admin}}
+    {% if current_user.is_authenticated %}
+    <p>The app thinks the user with user name of "{{ current_user.username}}" is logged in</p>
+
+    {% else %}
+    <p>The app thinks there is no user currently logged in</p>
+    {% endif %}
+
 </div>
 </div>
 {% endblock %}

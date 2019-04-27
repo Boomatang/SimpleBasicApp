@@ -3,10 +3,16 @@
 {% block title %}{{ super() }} Auth Index {% endblock %}
 
 {% block page_content %}
-<h1>Page Header</h1>
-<p>Page content</p>
+  <div class="ui three column grid">
+  <div class="ui centered column">
+<h1>This page requires a user to be logged in</h1>
+<p>The current logged in use is : {{ current_user.username}}</p>
+
+</div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 {% endblock %}
+
