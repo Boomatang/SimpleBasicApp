@@ -8,6 +8,7 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
+    APP_SSL_CONTEXT = None
 
     @staticmethod
     def init_app(app):
@@ -18,6 +19,16 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+
+
+class TlsConfig(Config):
+    SSL_DISABLE = False
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+
+    # APP_SSL_CONTEXT = ("webserver.pem", "cert.pem")
+    APP_SSL_CONTEXT = ('cert.pem', 'key.pem')
 
 
 class TestingConfig(Config):
@@ -31,6 +42,8 @@ class TestingConfig(Config):
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
+    'simple': DevelopmentConfig,
+    'TLS': TlsConfig,
 
     'default': DevelopmentConfig
 }
