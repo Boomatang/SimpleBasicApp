@@ -9,7 +9,9 @@
 <p>A user is not required to be logged in here.</p>
 
     {% if current_user.is_authenticated %}
-    <p>The app thinks the user with user name of "{{ current_user.username}}" is logged in</p>
+    <p>The app thinks the user with user name of
+      <span class="ui huge red header">"{{ current_user.username}}"</span>
+      is logged in</p>
 
     {% else %}
     <p>The app thinks there is no user currently logged in</p>

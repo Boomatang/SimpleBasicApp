@@ -3,6 +3,7 @@
     <a class="item" href="{{ url_for('main.index') }}">Home Page</a>
 
     <a class="item" href="{{ url_for('main.test') }}">Page requires login</a>
+    <a class="item" href="{{ url_for('main.cross_site_scripting') }}">Cross Site Scripting</a>
 
     {% include('auth/_auth_menu.html') %}
   </div>

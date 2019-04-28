@@ -43,3 +43,8 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.String(256))
+

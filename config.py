@@ -31,17 +31,18 @@ class TlsConfig(Config):
     APP_SSL_CONTEXT = ('cert.pem', 'key.pem')
 
 
-class TestingConfig(Config):
+class CssConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+
     WTF_CSRF_ENABLED = False
     WTF_CSRF_METHODS = []
 
 
 config = {
     'development': DevelopmentConfig,
-    'testing': TestingConfig,
+    'CSS': CssConfig,
     'simple': DevelopmentConfig,
     'TLS': TlsConfig,
 

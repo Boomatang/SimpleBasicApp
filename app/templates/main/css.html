@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+
+{% block title %}{{ super() }} Cross Site Scripting {% endblock %}
+
+{% block page_content %}
+<div class="ui two column centered grid">
+  <div class="ui column container">
+<h1>This page shows Cross Site Scripting.</h1>
+
+<form class="ui large form" method="POST">
+      {{ form.csrf_token }}
+      <div class="ui stacked segment">
+        {{ render_field(form.comment) }}
+        {{ form.submit(class="ui fluid large teal submit button") }}
+      </div>
+
+      <div class="ui error message"></div>
+
+    </form>
+
+
+    <div class="ui segment">
+    <h1 class="ui header">Comments</h1>
+      {% for comment in comments %}
+      <div class="ui raised segment">
+        {{ comment.comment | safe}}
+      </div>
+      {% endfor %}
+    </div>
+
+
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}
