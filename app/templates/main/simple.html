@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+
+{% block title %}{{ super() }} Cross Site Scripting {% endblock %}
+
+{% block page_content %}
+  <div class="ui two column centered grid">
+  <div class="ui column container">
+    <h1>This page has basic HTML protections.</h1>
+
+    <form class="ui large form" method="Get">
+
+      <div class="field">
+        <label>Max Length Field</label>
+        <div class="ui input">
+          <input name="max" type="text" maxlength="8">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Read Only Data Field</label>
+        <div class="ui input">
+          <input type="text" name="country" value="Ireland" readonly="true">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Hidden input field</label>
+        <div class="ui input">
+          <input type="hidden" name="country" value="France">
+        </div>
+      </div>
+
+      <button class="ui fluid large teal submit button" type="submit">Enter Form</button>
+
+      <div class="ui error message"></div>
+
+    </form>
+
+
+  </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+{% endblock %}

@@ -19,7 +19,7 @@ def test():
     return render_template('main/test.html')
 
 
-@main.route('css', methods=['POST', 'GET'])
+@main.route('/css', methods=['POST', 'GET'])
 def cross_site_scripting():
     form = CommentForm()
 
@@ -39,3 +39,9 @@ def cross_site_scripting():
         return redirect(url_for('main.cross_site_scripting'))
 
     return render_template('main/css.html', form=form, comments=comments)
+
+
+@main.route('/simple_form', methods=['POST', 'GET'])
+def simple_form():
+
+    return render_template('main/simple.html')

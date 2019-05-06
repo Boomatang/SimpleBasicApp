@@ -31,18 +31,22 @@ class TlsConfig(Config):
     APP_SSL_CONTEXT = ('cert.pem', 'key.pem')
 
 
-class CssConfig(Config):
-    TESTING = True
+class XssConfig(Config):
+    DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
     WTF_CSRF_ENABLED = False
     WTF_CSRF_METHODS = []
+    SESSION_COOKIE_HTTPONLY = False
+    REMEMBER_COOKIE_HTTPONLY = False
+    SESSION_COOKIE_SECURE = False
+    REMEMBER_COOKIE_SECURE = False
 
 
 config = {
     'development': DevelopmentConfig,
-    'CSS': CssConfig,
+    'XSS': XssConfig,
     'simple': DevelopmentConfig,
     'TLS': TlsConfig,
 
